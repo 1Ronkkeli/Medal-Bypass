@@ -211,10 +211,10 @@ main {
   margin-bottom: 1.5rem;
 }
 
+/* Input wrapper styling - updated to remove overflow hidden */
 .input-wrapper {
   position: relative;
   flex: 1;
-  overflow: hidden;
 }
 
 /* Remove the animated line from the input wrapper */
@@ -235,6 +235,7 @@ main {
   color: var(--primary);
 }
 
+/* Input field styling - updated to remove yellow border */
 input {
   width: 100%;
   padding: 0.875rem 1rem 0.875rem 2.5rem;
@@ -246,12 +247,11 @@ input {
   transition: var(--transition);
 }
 
-/* Adjust input focus style to not rely on the line */
+/* Adjust input focus style to be more subtle */
 input:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
-  transform: translateY(-1px);
+  border-color: var(--border);
+  box-shadow: 0 0 0 1px var(--border);
 }
 
 button {
