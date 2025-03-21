@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Medal Bypass</title>
-    <meta name="title" content="Medal Bypass" />
+    <title>Medal Downloader</title>
+    <meta name="title" content="Medal Downloader" />
     <meta
       name="description"
       content="Download Medal Clips Easily Without Watermarks!"
@@ -31,50 +31,78 @@
     <script defer src="/_vercel/insights/script.js"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body data-clips-shown="false">
-    <div class="container">
-      <div class="card">
-        <div class="header">
-          <h1>Medal Bypass</h1>
-          <p id="desc">
-            Bypasses the requirement of Medal Premium in order to download clips
-            without watermarks!
-          </p>
+  <body class="dark">
+    <div class="app-container">
+      <header>
+        <div class="logo">
+          <i class="fa-solid fa-medal"></i>
+          <h1>Medal Downloader</h1>
         </div>
-        <div class="input-group">
-          <input
-            type="text"
-            id="textbox"
-            aria-label="Input Medal Link Area"
-            placeholder="Paste Medal Clip URL or ID here"
-          />
-          <button aria-label="Download Medal Clip">Download</button>
+        <div class="theme-toggle">
+          <input type="checkbox" id="theme-switch" class="theme-switch">
+          <label for="theme-switch" class="theme-switch-label">
+            <i class="fa-solid fa-sun"></i>
+            <i class="fa-solid fa-moon"></i>
+            <span class="slider"></span>
+          </label>
         </div>
-        <a href="https://imgur.com/IFMBxNv" target="_blank" class="help-link">
-          <i class="fa-solid fa-circle-question"></i> How to get the Medal Link or ID
-        </a>
-        <div id="loading" aria-label="Loading"></div>
-      </div>
-      
-      <div id="videos"></div>
-      
+      </header>
+
+      <main>
+        <div class="hero">
+          <h2>Download Medal Clips Without Watermarks</h2>
+          <p>Bypass the requirement of Medal Premium to download clips without watermarks</p>
+        </div>
+
+        <div class="card">
+          <div class="input-container">
+            <div class="input-wrapper">
+              <i class="fa-solid fa-link input-icon"></i>
+              <input
+                type="text"
+                id="textbox"
+                aria-label="Input Medal Link Area"
+                placeholder="Paste Medal Clip URL or ID here"
+              />
+            </div>
+            <button id="download-btn" aria-label="Download Medal Clip">
+              <i class="fa-solid fa-download"></i>
+              <span>Download</span>
+            </button>
+          </div>
+          
+          <div id="loading" class="loading" aria-label="Loading"></div>
+          
+          <div class="help-section">
+            <a href="https://imgur.com/IFMBxNv" target="_blank" class="help-link">
+              <i class="fa-solid fa-circle-question"></i> 
+              How to get the Medal Link or ID
+            </a>
+          </div>
+        </div>
+
+        <div id="videos" class="videos-container"></div>
+      </main>
+
       <footer>
-        <a
-          href="https://github.com/1Ronkkeli/Medal-Bypass"
-          target="_blank"
-          class="github-link"
-        >
-          <i class="fa-brands fa-github"></i> GitHub
-        </a>
-        <a
-          href="https://github.com/1Ronkkeli/Medal-Bypass/issues/new"
-          target="_blank"
-          class="issues-link"
-        >
-          <i class="fa-solid fa-bug"></i> Report an issue
-        </a>
-        <div class="creator">
-          Created with love by Ronkkeli ❤️
+        <div class="footer-links">
+          <a href="https://github.com/1Ronkkeli/Medal-Bypass" target="_blank" class="github-link">
+            <i class="fa-brands fa-github"></i> GitHub
+          </a>
+          <a href="https://github.com/1Ronkkeli/Medal-Bypass/issues/new" target="_blank" class="issues-link">
+            <i class="fa-solid fa-bug"></i> Report an issue
+          </a>
+        </div>
+        
+        <div class="footer-credits">
+          <div class="creator">
+            Created with love by Ronkkeli ❤️
+          </div>
+          <div class="hosting">
+            <a href="https://www.syntrel.co" target="_blank">
+              Hosted Using <span class="syntrel">Syntrel</span>
+            </a>
+          </div>
         </div>
       </footer>
     </div>
