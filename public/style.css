@@ -1,30 +1,30 @@
 :root {
-  /* Light Theme Colors */
+  /* Light Theme Colors - Based on Medal logo */
   --light-bg: #f8f9fa;
   --light-card-bg: #ffffff;
   --light-text: #212529;
   --light-text-secondary: #6c757d;
   --light-border: #dee2e6;
-  --light-primary: #553ea8;
-  --light-primary-hover: #4a37a0;
-  --light-secondary: #00b786;
-  --light-secondary-hover: #00a578;
-  --light-accent: #ff9800;
+  --light-primary: #ffc107; /* Yellow from logo */
+  --light-primary-hover: #ffb300;
+  --light-secondary: #ff9800; /* Orange from logo */
+  --light-secondary-hover: #fb8c00;
+  --light-accent: #ff5722;
   --light-error: #dc3545;
   --light-success: #28a745;
   --light-shadow: rgba(0, 0, 0, 0.1);
 
-  /* Dark Theme Colors */
+  /* Dark Theme Colors - Based on Medal logo */
   --dark-bg: #121212;
   --dark-card-bg: #1e1e1e;
   --dark-text: #f8f9fa;
   --dark-text-secondary: #adb5bd;
   --dark-border: #343a40;
-  --dark-primary: #6a4fd3;
-  --dark-primary-hover: #7a5fe3;
-  --dark-secondary: #00d9a3;
-  --dark-secondary-hover: #00f0b5;
-  --dark-accent: #ffb74d;
+  --dark-primary: #ffc107; /* Yellow from logo */
+  --dark-primary-hover: #ffd54f;
+  --dark-secondary: #ff9800; /* Orange from logo */
+  --dark-secondary-hover: #ffa726;
+  --dark-accent: #ff5722;
   --dark-error: #f44336;
   --dark-success: #4caf50;
   --dark-shadow: rgba(0, 0, 0, 0.3);
@@ -81,6 +81,7 @@ body.dark {
 
 html {
   font-size: 16px;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -90,6 +91,7 @@ body {
   line-height: 1.6;
   transition: var(--transition);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 a {
@@ -126,15 +128,37 @@ header {
   gap: 0.75rem;
 }
 
-.logo i {
-  font-size: 1.75rem;
-  color: var(--primary);
+.logo-img {
+  height: 40px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+  transform: scale(1.1);
 }
 
 .logo h1 {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text);
+  position: relative;
+  overflow: hidden;
+}
+
+.logo h1::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary);
+  transition: width 0.3s ease;
+}
+
+.logo:hover h1::after {
+  width: 100%;
 }
 
 main {
@@ -173,6 +197,12 @@ main {
   box-shadow: 0 4px 20px var(--shadow);
   padding: 2rem;
   transition: var(--transition);
+  transform: translateY(0);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px var(--shadow);
 }
 
 .input-container {
@@ -184,6 +214,22 @@ main {
 .input-wrapper {
   position: relative;
   flex: 1;
+  overflow: hidden;
+}
+
+.input-wrapper::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+  transition: width 0.3s ease;
+}
+
+.input-wrapper:focus-within::after {
+  width: 100%;
 }
 
 .input-icon {
@@ -192,6 +238,11 @@ main {
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.input-wrapper:focus-within .input-icon {
+  color: var(--primary);
 }
 
 input {
@@ -208,7 +259,7 @@ input {
 input:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 2px rgba(106, 79, 211, 0.2);
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
 }
 
 button {
@@ -217,22 +268,61 @@ button {
   gap: 0.5rem;
   padding: 0.875rem 1.5rem;
   background-color: var(--primary);
-  color: white;
+  color: #212529; /* Dark text for better contrast on yellow */
   border: none;
   border-radius: var(--border-radius);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.7s ease;
 }
 
 button:hover {
   background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+button:hover::before {
+  left: 100%;
 }
 
 button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  transform: translateY(0);
+}
+
+button:disabled::before {
+  left: -100%;
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+  }
 }
 
 .loading {
@@ -242,6 +332,20 @@ button:disabled {
   color: var(--secondary);
   margin-bottom: 1rem;
   display: none;
+}
+
+.loading.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .help-section {
@@ -254,10 +358,20 @@ button:disabled {
   gap: 0.5rem;
   color: var(--text-secondary);
   font-size: 0.875rem;
+  transition: all 0.3s ease;
 }
 
 .help-link:hover {
   color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.help-link i {
+  transition: transform 0.3s ease;
+}
+
+.help-link:hover i {
+  transform: rotate(15deg);
 }
 
 .videos-container {
@@ -273,6 +387,24 @@ button:disabled {
   box-shadow: 0 4px 20px var(--shadow);
   padding: 1.5rem;
   transition: var(--transition);
+  animation: slideInUp 0.5s ease;
+  transform: translateY(0);
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.video:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px var(--shadow);
 }
 
 .video video {
@@ -280,6 +412,11 @@ button:disabled {
   border-radius: var(--border-radius-sm);
   margin-bottom: 1rem;
   background-color: #000;
+  transition: transform 0.3s ease;
+}
+
+.video:hover video {
+  transform: scale(1.01);
 }
 
 .video a {
@@ -288,14 +425,32 @@ button:disabled {
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
   background-color: var(--secondary);
-  color: white;
+  color: #212529; /* Dark text for better contrast on orange */
   border-radius: var(--border-radius);
   font-weight: 600;
   transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.video a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.7s ease;
 }
 
 .video a:hover {
   background-color: var(--secondary-hover);
+  transform: translateY(-2px);
+}
+
+.video a:hover::before {
+  left: 100%;
 }
 
 footer {
@@ -318,8 +473,13 @@ footer {
   color: var(--text-secondary);
 }
 
-.footer-links a:hover {
+.hover-effect {
+  transition: all 0.3s ease;
+}
+
+.hover-effect:hover {
   color: var(--primary);
+  transform: translateY(-2px);
 }
 
 .footer-credits {
@@ -336,7 +496,7 @@ footer {
   color: var(--text-secondary);
 }
 
-.syntrel {
+.fork-source {
   font-weight: 700;
   background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
   -webkit-background-clip: text;
@@ -366,6 +526,11 @@ footer {
   position: relative;
   cursor: pointer;
   box-shadow: 0 2px 5px var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.theme-switch-label:hover {
+  transform: translateY(-2px);
 }
 
 .theme-switch-label i {
@@ -374,7 +539,7 @@ footer {
 }
 
 .fa-sun {
-  color: #f39c12;
+  color: #ffc107;
 }
 
 .fa-moon {
@@ -426,6 +591,10 @@ footer {
     font-size: 1.25rem;
   }
 
+  .logo-img {
+    height: 30px;
+  }
+
   .hero h2 {
     font-size: 1.25rem;
   }
@@ -433,5 +602,26 @@ footer {
   .card {
     padding: 1rem;
   }
+}
+
+/* Animation for loading dots */
+@keyframes loadingDots {
+  0% {
+    content: ".";
+  }
+  33% {
+    content: "..";
+  }
+  66% {
+    content: "...";
+  }
+  100% {
+    content: "";
+  }
+}
+
+.loading::after {
+  content: "";
+  animation: loadingDots 1.5s infinite;
 }
 
