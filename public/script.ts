@@ -69,7 +69,7 @@ async function fetchVideoWithoutWatermark(
   url: string
 ): Promise<{ src: string; valid: boolean } | undefined> {
   const data = { url };
-  const fetchData = await fetch("https://medalbypass.vercel.app/api/clip", {
+  const fetchData = await fetch("https://medal-dl.rxx.fi/api/clip", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
