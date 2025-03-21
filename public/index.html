@@ -18,7 +18,7 @@
     <meta name="robots" content="index, follow" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="language" content="English" />
-    <meta name="author" content="Tyson3101" />
+    <meta name="author" content="Ronkkeli" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -27,180 +27,57 @@
       crossorigin="use-credentials"
       href="site.webmanifest"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script defer src="/_vercel/insights/script.js"></script>
-    <style>
-      :root {
-        --text-color: rgb(0, 183, 134);
-      }
-    </style>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body data-clips-shown="false">
-    <div class="inputArea">
-      <div class="header">
-        <h1 aria-label="Header">Medal Bypass</h1>
-        <span id="desc" aria-label="Description"
-          >Bypasses the requirement of Medal Premium in order to download clips
-          without watermarks!</span
-        >
-      </div>
-      <input
-        type="text"
-        id="textbox"
-        style="width: 70vw"
-        aria-label="Input Medal Link Area"
-        placeholder="Copy and Paste the Medal Clip URL/ID Here"
-      />
-      <button aria-label="Download Medal Clip">Download</button>
-      <a href="https://imgur.com/IFMBxNv" target="_blank" class="linkHelp"
-        >Click here to see how to get the Medal Link or ID</a
-      >
-
-      <a
-        href="https://github.com/Tyson3101/Medal-Bypass/issues/new"
-        target="_blank"
-        class="linkIssues"
-        >Having issues? Post an issue on the Github Page</a
-      >
-      <p
-        style="display: none; font-size: x-large"
-        id="loading"
-        aria-label="Loading"
-      ></p>
-    </div>
-
-    <!-- Bottom left section -->
-    <p
-      style="
-        display: flex;
-        justify-content: end;
-        align-items: flex-end;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        font-size: 0.75em;
-        gap: 0.5em;
-        font-weight: bold;
-        margin-left: 1em;
-      "
-    >
-      <a
-        aria-label="Github Page"
-        target="_blank"
-        style="text-decoration: none; display: inline; color: inherit"
-        href="https://github.com/Tyson3101/Medal-Bypass"
-      >
-        <span
-          style="
-            position: relative;
-            display: inline-block;
-            width: 3rem;
-            height: 3rem;
-          "
-        >
-          <i style="font-size: 3rem" class="fa fa-github"></i>
-        </span>
-      </a>
-      <i
-        a
-        style="
-          display: inline-block;
-          transform: scaleY(3.8);
-          position: relative;
-          top: -1.5rem;
-          pointer-events: none;
-        "
-        >|</i
-      >
-      <span style="position: relative; top: -12px">
-        <a
-          aria-label="How it works"
-          target="_blank"
-          style="
-            text-decoration: underline;
-            display: inline;
-            color: inherit;
-            text-decoration-color: rgba(0, 163, 82, 0.7);
-          "
-          href="https://youtu.be/chbzCxr5FpM"
-        >
-          How It Works?
+    <div class="container">
+      <div class="card">
+        <div class="header">
+          <h1>Medal Bypass</h1>
+          <p id="desc">
+            Bypasses the requirement of Medal Premium in order to download clips
+            without watermarks!
+          </p>
+        </div>
+        <div class="input-group">
+          <input
+            type="text"
+            id="textbox"
+            aria-label="Input Medal Link Area"
+            placeholder="Paste Medal Clip URL or ID here"
+          />
+          <button aria-label="Download Medal Clip">Download</button>
+        </div>
+        <a href="https://imgur.com/IFMBxNv" target="_blank" class="help-link">
+          <i class="fa-solid fa-circle-question"></i> How to get the Medal Link or ID
         </a>
-
+        <div id="loading" aria-label="Loading"></div>
+      </div>
+      
+      <div id="videos"></div>
+      
+      <footer>
         <a
-          href="https://www.youtube.com/@Tyson3101"
+          href="https://github.com/1Ronkkeli/Medal-Bypass"
           target="_blank"
-          style="
-            background-color: red;
-            color: white;
-            padding: 0.2em 0.2em;
-            margin-top: 3px;
-            font-size: 10px;
-            border-radius: 5px;
-            text-decoration: none;
-          "
-          >Subscribe</a
+          class="github-link"
         >
-      </span>
-    </p>
-
-    <!-- Bottom right section -->
-    <p
-      style="
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        font-size: 0.75em;
-        font-weight: bold;
-        margin-right: 1em;
-        text-align: right;
-      "
-    >
-      <span style="font-size: smaller">Check out my other work:</span><br />
-      <a
-        href="https://chrome.google.com/webstore/detail/ckbnikemebopgknkpgjlkbffpkkhblbe"
-        target="_blank"
-        style="
-          text-decoration: none;
-          display: inline-block;
-          padding: 0;
-          margin: 0;
-          color: rgb(0, 183, 165);
-        "
-        >Auto YT Shorts Scroller</a
-      ><br />
-      <a
-        href="https://chrome.google.com/webstore/detail/egmgebeelgaakhaoodlmnimbfemfgdah"
-        target="_blank"
-        style="
-          text-decoration: none;
-          display: inline-block;
-          padding: 0;
-          margin: 0;
-          color: rgb(0, 183, 165);
-        "
-        >Redirect Blocker</a
-      ><br />
-      <a
-        href="https://tyson3101.com"
-        target="_blank"
-        style="
-          text-decoration: overline;
-          display: inline-block;
-          padding: 0;
-          margin-top: 2px;
-          color: rgb(0, 183, 165);
-          font-size: 0.9em;
-        "
-        >Tyson3101.com</a
-      >
-    </p>
-
-    <div id="videos"></div>
+          <i class="fa-brands fa-github"></i> GitHub
+        </a>
+        <a
+          href="https://github.com/1Ronkkeli/Medal-Bypass/issues/new"
+          target="_blank"
+          class="issues-link"
+        >
+          <i class="fa-solid fa-bug"></i> Report an issue
+        </a>
+        <div class="creator">
+          Created with love by Ronkkeli ❤️
+        </div>
+      </footer>
+    </div>
 
     <script src="./script.js"></script>
     <script>
@@ -213,3 +90,4 @@
     </script>
   </body>
 </html>
+
