@@ -66,34 +66,49 @@ if (params.get("url")?.length) {
 } else if (params.get("id")?.length) {
   downloadVideo(params.get("id"))
 }
+
 async function downloadVideo(initialURL) {
   const inputtedURL = initialURL ?? document.querySelector("input").value
+  if (!inputtedURL.trim()) {
+    return showNotification("Please enter a Medal clip URL or ID", "error")
+  }
+
   const url = configureURL(inputtedURL)
-  if (!url || !checkURL(url)) return showNotification("Please enter a valid Medal clip URL/ID.", "error")
+  if (!url) {
+    return showNotification("Please enter a valid Medal clip URL/ID.", "error")
+  }
+
   const id = extractClipID(url)
-  if (!id) return showNotification("Please enter a valid Medal clip URL/ID.", "error")
+  if (!id) {
+    return showNotification("Could not extract clip ID from the URL. Please check the format.", "error")
+  }
+
   if (isClipAlreadyDownloaded(id)) {
-    return showNotification("You already downloaded this clip!", "error")
+    return showNotification("You already downloaded this clip!", "warning")
   }
+
   if (cooldown > 0) {
-    return showNotification(`Please wait ${cooldown} seconds.`, "error")
+    return showNotification(`Please wait ${cooldown} seconds before trying again.`, "warning")
   }
+
   cooldown = COOLDOWN_START
   updateButtonState(cooldown)
   addClipToHistory(id)
   startLoading()
+
   try {
     const video = await fetchVideoWithoutWatermark(url)
     if (!video?.valid) {
       stopLoading(false, id)
-      return showNotification(ERROR_MESSAGE, "error")
+      return showNotification("Could not retrieve the video. The clip may be private or no longer available.", "error")
     }
     stopLoading(video?.valid, id)
     displayVideoWithDownloadLink(video.src, id)
     showNotification("Video downloaded successfully!", "success")
-  } catch {
+  } catch (error) {
+    console.error("Error fetching video:", error)
     stopLoading(false, id)
-    return showNotification(ERROR_MESSAGE, "error")
+    return showNotification("An error occurred while processing your request. Please try again later.", "error")
   }
 }
 
@@ -119,27 +134,49 @@ function showNotification(message, type = "info") {
         gap: 10px;
       }
       .notification {
-        padding: 12px 20px;
+        padding: 16px 20px;
         border-radius: 8px;
         color: white;
         font-weight: 500;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         min-width: 300px;
         max-width: 450px;
-        animation: slideInRight 0.3s ease, fadeOut 0.5s ease 4.5s forwards;
+        animation: slideInRight 0.3s ease;
         cursor: pointer;
+        position: relative;
+        overflow: hidden;
       }
       .notification.success {
         background-color: #4caf50;
       }
       .notification.error {
-        background-color: #f44336;
+        background-color: #2c2c2c;
+        border-left: 4px solid #f44336;
+      }
+      .notification.warning {
+        background-color: #2c2c2c;
+        border-left: 4px solid #ff9800;
       }
       .notification.info {
-        background-color: #2196f3;
+        background-color: #2c2c2c;
+        border-left: 4px solid #2196f3;
+      }
+      .notification::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.3);
+        animation: countdown 5s linear forwards;
+      }
+      @keyframes countdown {
+        from { width: 100%; }
+        to { width: 0%; }
       }
       @keyframes slideInRight {
         from {
@@ -177,6 +214,9 @@ function showNotification(message, type = "info") {
     case "error":
       icon = "fa-exclamation-circle"
       break
+    case "warning":
+      icon = "fa-exclamation-triangle"
+      break
     default:
       icon = "fa-info-circle"
   }
@@ -188,107 +228,155 @@ function showNotification(message, type = "info") {
 
   // Remove after 5 seconds
   setTimeout(() => {
-    notification.remove()
+    notification.style.animation = "fadeOut 0.5s ease forwards"
+    setTimeout(() => {
+      notification.remove()
+    }, 500)
   }, 5000)
 
   // Click to dismiss
   notification.addEventListener("click", () => {
-    notification.remove()
+    notification.style.animation = "fadeOut 0.3s ease forwards"
+    setTimeout(() => {
+      notification.remove()
+    }, 300)
   })
 }
 
 async function fetchVideoWithoutWatermark(url) {
   const data = { url }
-  const fetchData = await fetch("https://medal-dl.rxx.fi/api/clip", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  }).catch((e) => e)
-  return fetchData?.json()
+  try {
+    const fetchData = await fetch("https://medal-dl.rxx.fi/api/clip", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+
+    if (!fetchData.ok) {
+      console.error("Server responded with status:", fetchData.status)
+      return { valid: false }
+    }
+
+    return await fetchData.json()
+  } catch (error) {
+    console.error("Error fetching video:", error)
+    return { valid: false }
+  }
 }
+
 function configureURL(url) {
   if (!url) return false
-  if (!url.toLowerCase().includes("medal")) {
-    if (!url.includes("/")) url = "https://medal.tv/?contentId=" + url.trim()
-    else return false
+
+  // Clean up the URL
+  url = url.trim()
+
+  // Handle direct clip IDs
+  if (!url.includes("/") && !url.includes("medal")) {
+    return "https://medal.tv/?contentId=" + url
   }
-  if (url.toLowerCase().indexOf("https://") !== url.toLowerCase().lastIndexOf("https://")) {
-    return false
-  }
-  if (!url.toLowerCase().includes("https://")) {
+
+  // Handle URLs without https://
+  if (!url.toLowerCase().startsWith("http")) {
     url = "https://" + url
   }
-  url = url.replace("?theater=true", "")
-  return url.trim()
+
+  // Validate the URL
+  try {
+    const urlObj = new URL(url)
+    if (!urlObj.hostname.toLowerCase().includes("medal")) {
+      return false
+    }
+
+    // Remove theater mode if present
+    url = url.replace("?theater=true", "")
+
+    // Handle URLs with query parameters
+    if (url.includes("?")) {
+      // Keep only the base URL and contentId if present
+      const urlObj = new URL(url)
+      const contentId = urlObj.searchParams.get("contentId")
+      if (contentId) {
+        return `https://medal.tv/?contentId=${contentId}`
+      }
+
+      // For other URLs, keep the path but remove query params that might cause issues
+      const basePath = urlObj.origin + urlObj.pathname
+      return basePath
+    }
+
+    return url
+  } catch (e) {
+    console.error("Error parsing URL:", e)
+    return false
+  }
 }
+
 function checkURL(url) {
   try {
     if (!url) return false
-    if (!new URL(url).hostname.toLowerCase().includes("medal")) {
-      return false
-    }
+    const urlObj = new URL(url)
+    return urlObj.hostname.toLowerCase().includes("medal")
   } catch {
     return false
   }
-  return true
 }
-function displayVideoWithDownloadLink(src, id) {
-  const containerElement = document.createElement("div")
-  const videoElement = document.createElement("video")
-  const aElement = document.createElement("a")
 
-  containerElement.classList.add("video", "animate__animated", "animate__fadeIn")
-
-  aElement.download = "MedalTV_" + id + ".mp4"
-  aElement.innerHTML = '<i class="fa-solid fa-download"></i> Download Video'
-  aElement.href = src
-  aElement.className = "download-button"
-
-  videoElement.src = src
-  videoElement.controls = true
-  videoElement.className = "video-player"
-
-  containerElement.appendChild(videoElement)
-  containerElement.appendChild(aElement)
-  videosContainer.prepend(containerElement)
-  document.body.dataset["clipsShown"] = "true"
-
-  // Scroll to the video with smooth animation
-  setTimeout(() => {
-    containerElement.scrollIntoView({ behavior: "smooth", block: "center" })
-  }, 300)
-}
 function extractClipID(url) {
-  const clipIdMatch = url.match(/\/clips\/([^/?&]+)/)
-  const contentIdMatch = url.match(/[?&]contentId=([^&]+)/)
-  if (clipIdMatch) return clipIdMatch[1]
-  if (contentIdMatch) return contentIdMatch[1]
-  return false
+  try {
+    // Try to extract clip ID from URL path
+    const clipIdMatch = url.match(/\/clips\/([^/?&]+)/)
+    if (clipIdMatch) return clipIdMatch[1]
+
+    // Try to extract contentId from query params
+    const urlObj = new URL(url)
+    const contentId = urlObj.searchParams.get("contentId")
+    if (contentId) return contentId
+
+    // Try to extract from invite parameter
+    const invite = urlObj.searchParams.get("invite")
+    if (invite) {
+      const parts = invite.split("-")
+      if (parts.length > 0) {
+        return parts[parts.length - 1]
+      }
+    }
+
+    return false
+  } catch (e) {
+    console.error("Error extracting clip ID:", e)
+    return false
+  }
 }
+
 function isClipAlreadyDownloaded(id) {
   return lastURLs.some((u) => id === u.id)
 }
+
 function removeClipFromHistory(id) {
   const index = lastURLs.findIndex((u) => u.id === id)
   if (index !== -1) {
     lastURLs.splice(index, 1)
   }
 }
+
 function updateClipFromHistory(id) {
   const index = lastURLs.findIndex((u) => u.id === id)
   if (index !== -1) {
     lastURLs[index].active = false
   }
 }
+
 function updateButtonState(cooldown) {
   button.disabled = true
   button.style.cursor = "not-allowed"
   button.classList.remove("pulse-animation")
   button.innerHTML = `<i class="fa-solid fa-clock"></i> Wait ${cooldown} seconds!`
 }
+
 function addClipToHistory(id) {
   lastURLs.push({ id, active: true })
 }
+
 function startLoading() {
   if (loadingInterval) clearInterval(loadingInterval)
   loading.style.display = "block"
@@ -296,6 +384,7 @@ function startLoading() {
   helpLink.style.display = "none"
   loading.innerText = LOADING_MESSAGE
 }
+
 function stopLoading(successful = true, id = "") {
   if (id) {
     if (successful) updateClipFromHistory(id)
@@ -311,6 +400,7 @@ function stopLoading(successful = true, id = "") {
     loading.style.display = "none"
   }, 300)
 }
+
 // Cooldown
 setInterval(() => {
   if (cooldown > 0) {
@@ -329,4 +419,35 @@ setInterval(() => {
     }
   }
 }, 1000)
+
+function displayVideoWithDownloadLink(videoSrc, clipId) {
+  const videoContainerId = `video-container-${clipId}`
+  let videoContainer = document.getElementById(videoContainerId)
+
+  if (!videoContainer) {
+    videoContainer = document.createElement("div")
+    videoContainer.id = videoContainerId
+    videoContainer.className = "video-container"
+    videosContainer.prepend(videoContainer)
+  } else {
+    videoContainer.innerHTML = "" // Clear existing content
+  }
+
+  const video = document.createElement("video")
+  video.src = videoSrc
+  video.controls = true
+  video.muted = true
+  video.loop = true
+  video.autoplay = true
+  video.className = "medal-video"
+
+  const downloadLink = document.createElement("a")
+  downloadLink.href = videoSrc
+  downloadLink.download = `medal_clip_${clipId}.mp4`
+  downloadLink.textContent = "Download Video"
+  downloadLink.className = "download-link"
+
+  videoContainer.appendChild(video)
+  videoContainer.appendChild(downloadLink)
+}
 
