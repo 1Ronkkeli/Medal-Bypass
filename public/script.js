@@ -1,3 +1,32 @@
+// Theme Toggle Functionality
+document.addEventListener("DOMContentLoaded", () => {
+  const themeSwitch = document.getElementById("theme-switch")
+
+  // Check for saved theme preference or use device preference
+  const savedTheme = localStorage.getItem("theme")
+  if (savedTheme) {
+    document.body.className = savedTheme
+    themeSwitch.checked = savedTheme === "dark"
+  } else {
+    // Use device preference
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+    document.body.className = prefersDark ? "dark" : "light"
+    themeSwitch.checked = prefersDark
+  }
+
+  // Theme switch event listener
+  themeSwitch.addEventListener("change", () => {
+    if (themeSwitch.checked) {
+      document.body.className = "dark"
+      localStorage.setItem("theme", "dark")
+    } else {
+      document.body.className = "light"
+      localStorage.setItem("theme", "light")
+    }
+  })
+})
+
+// Medal Downloader Functionality
 const ERROR_MESSAGE = `Please enter a valid Medal clip URL/ID.
 Make sure you have copied the URL/ID correctly and the clip is not private.
 OR
@@ -10,7 +39,7 @@ let cooldown = 0
 const videosContainer = document.querySelector("#videos")
 const loading = document.querySelector("#loading")
 const helpLink = document.querySelector(".help-link")
-const button = document.querySelector("button")
+const button = document.querySelector("#download-btn")
 button.addEventListener("click", () => downloadVideo())
 const params = new URLSearchParams(document.location.search)
 if (params.get("url")?.length) {
@@ -122,7 +151,7 @@ function updateClipFromHistory(id) {
 function updateButtonState(cooldown) {
   button.disabled = true
   button.style.cursor = "not-allowed"
-  button.innerText = "Wait " + cooldown + " seconds!"
+  button.innerHTML = `<i class="fa-solid fa-clock"></i> Wait ${cooldown} seconds!`
 }
 function addClipToHistory(id) {
   lastURLs.push({ id, active: true })
@@ -147,7 +176,7 @@ function stopLoading(successful = true, id = "") {
   if (lastURLs.some((u) => u.active)) return
   if (loadingInterval) clearInterval(loadingInterval)
   if (!successful) {
-    helpLink.style.display = "block"
+    helpLink.style.display = "inline-flex"
   }
   loading.style.display = "none"
 }
@@ -156,12 +185,16 @@ setInterval(() => {
   if (cooldown > 0) {
     button.disabled = true
     button.style.cursor = "not-allowed"
-    button.innerText = "Wait " + cooldown + " seconds!"
+    button.innerHTML = `<i class="fa-solid fa-clock"></i> Wait ${cooldown} seconds!`
     cooldown--
   } else {
     button.disabled = false
     button.style.cursor = "pointer"
-    if (button.innerText !== "Download") button.innerText = "Download Another Clip"
+    if (button.innerHTML.includes("Download Another")) {
+      button.innerHTML = `<i class="fa-solid fa-download"></i> Download Another Clip`
+    } else {
+      button.innerHTML = `<i class="fa-solid fa-download"></i> Download`
+    }
   }
 }, 1000)
 
