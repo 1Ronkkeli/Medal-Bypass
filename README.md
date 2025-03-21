@@ -1,8 +1,8 @@
-# [Medal Bypass](https://medalbypass.web.app)
+# [Medal Bypass](https://medal-dl.rxx.fi/)
 
 ### Where
 
-##### Check the website here: [https://medalbypass.vercel.app](https://medalbypass.vercel.app)
+##### Check the website here: [https://medal-dl.rxx.fi/](https://medal-dl.rxx.fi/)
 
 ### What
 
@@ -22,8 +22,8 @@
 
 ### GET:
 
-`https://medalbypass.vercel.app/api/clip?url=<Url of Medal Clip>`  
-`https://medalbypass.vercel.app/api/clip?id=<ID of Medal Clip>`
+`https://medal-dl.rxx.fi/api/clip?url=<Url of Medal Clip>`  
+`https://medal-dl.rxx.fi/api/clip?id=<ID of Medal Clip>`
 
 ### POST
 
@@ -31,7 +31,7 @@
 curl -X POST \
   -H "Content-Type: application/json" \
   -d '{"url":"<your-clip-url>"}' \
-  https://medalbypass.vercel.app/api/clip
+  https://medal-dl.rxx.fi/api/clip
 ```
 
 ##### `'{"url":"<your-url>"}'` can be replaced with `'{"id":"<your-clip-id>"}'`
